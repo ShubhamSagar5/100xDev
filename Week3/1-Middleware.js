@@ -31,13 +31,19 @@ const checkKidney = (req,res,next) => {
     }
 }
 
+let count = 0
+const chekCountReq = (req,res,next) => {
+    count = count+1 
+    console.log(count)
+    next()
+}
 
 app.get("/health-checkup",checkValidation,checkKidney,function (req,res){
     res.send("All Things are good ")
 })
 
-app.get("/",(req,res)=>{
-    res.send("Hello jee")
+app.get("/",chekCountReq,(req,res)=>{
+    res.send(`Hello Jee countnumber of req ${count}`)
 })
 
 app.listen(3000,(req,res)=>{
