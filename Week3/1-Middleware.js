@@ -1,14 +1,30 @@
 const express = require("express") 
+const zod = require("zod")
+
 
 const app = express() 
 
-
+const schema1 = zod.string()
+const schema2 = zod.number()
 
 function checkValidation(req,res,next) {
     const userName = req.headers.username 
     const pass = req.headers.pass 
-    console.log(pass,userName)
-    if(userName !== "hari" || pass !== "123"){
+    console.log(typeof pass,userName)
+
+    const userNameCheck = schema1.safeParse(userName)
+    const passCheck = schema2.safeParse(pass)
+
+    console.log(userNameCheck,passCheck.success)
+
+    if(!userNameCheck || !passCheck.success){
+        return res.status(411).json({
+            success:false,
+            message:"Something happen with input value"
+        })
+    }
+
+    if(userName !== "hari" || pass !== 123){
         return res.status(403).json({
             success:false,
             message:"User Name And Password Incorrect"
@@ -45,6 +61,8 @@ app.get("/health-checkup",checkValidation,checkKidney,function (req,res){
 app.get("/",chekCountReq,(req,res)=>{
     res.send(`Hello Jee countnumber of req ${count}`)
 })
+
+
 
 app.listen(3000,(req,res)=>{
     console.log("Server is running on port number 3000")
