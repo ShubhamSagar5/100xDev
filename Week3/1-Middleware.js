@@ -5,12 +5,13 @@ const zod = require("zod")
 const app = express() 
 
 const schema1 = zod.string()
-const schema2 = zod.number()
+const schema2 = zod.string()
+// const schema2 = zod.number()
 
 function checkValidation(req,res,next) {
     const userName = req.headers.username 
     const pass = req.headers.pass 
-    console.log(typeof pass,userName)
+    console.log(typeof pass,typeof userName)
 
     const userNameCheck = schema1.safeParse(userName)
     const passCheck = schema2.safeParse(pass)
@@ -24,7 +25,7 @@ function checkValidation(req,res,next) {
         })
     }
 
-    if(userName !== "hari" || pass !== 123){
+    if(userName !== "hari" || pass !== "123"){
         return res.status(403).json({
             success:false,
             message:"User Name And Password Incorrect"
@@ -62,7 +63,14 @@ app.get("/",chekCountReq,(req,res)=>{
     res.send(`Hello Jee countnumber of req ${count}`)
 })
 
+// Global catches 
 
+app.use(function (err,req,res,next){
+    return res.status(500).json({
+        success:false,
+        message:"Something error occur in internal side"
+    })
+})
 
 app.listen(3000,(req,res)=>{
     console.log("Server is running on port number 3000")
