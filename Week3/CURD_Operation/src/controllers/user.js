@@ -7,7 +7,7 @@ const Schema = zod.object({
     password: zod.string()
 });
 
-const registerUser = async (req, res) => {
+exports.registerUser = async (req, res) => {
     try {
         const { name, userName, password } = req.body;
 
@@ -61,4 +61,85 @@ const registerUser = async (req, res) => {
     }
 };
 
-module.exports = registerUser;
+
+
+
+exports.login = async(req,res) => {
+        try {
+            const {userName,password} = req.body
+
+            if(!userName || !password){
+                return res.status(404).json({
+                    success:false,
+                    message:"All fileds are required"
+                })
+            }
+
+            const user = await User.findOne({userName})
+
+            if(!user){
+                return res.status(404).json({
+                    success:false,
+                    message:"User Not Found please Register "
+                })
+            }
+
+            const passwordIsCorrect = await user.isPasswordCorrect(password)
+
+            if(!passwordIsCorrect){
+                return res.status(404).json({
+                    success:false,
+                    message:"password not match"
+                })
+            }
+
+            const generateToken = user.generateToken() 
+
+           
+            const option = {
+                expire:new Date(Date.now() + process.env.COOKIEEXPIRE * 24 * 60 * 60 * 100)
+            }
+
+            return res.status(200).cookie("token",generateToken,option).json({
+                success:true,
+                message:"User Login Successfully",
+                token:generateToken
+            })
+        } catch (error) {
+            return res.status(500).json({
+                success:false,
+                message:error.message
+            })
+        }
+}
+
+
+
+
+exports.allUser = async(req,res)=>{
+    try {
+        const user = req.user 
+
+        if(!user){
+            return res.status(200).json({
+                success:false,
+                message:"User Not Login Please Loin First",
+
+    
+            }) 
+        }
+        const allUser = await User.find() 
+        return res.status(200).json({
+            success:false,
+            message:"All User Fetch Successfully",
+            data:allUser
+
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        })
+    }
+}
+

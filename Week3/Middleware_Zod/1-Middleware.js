@@ -4,66 +4,89 @@ const zod = require("zod")
 
 const app = express() 
 
-const schema1 = zod.string()
-const schema2 = zod.string()
-// const schema2 = zod.number()
+// const schema1 = zod.string()
+// const schema2 = zod.string()
+// // const schema2 = zod.number()
 
-function checkValidation(req,res,next) {
-    const userName = req.headers.username 
-    const pass = req.headers.pass 
-    console.log(typeof pass,typeof userName)
+// function checkValidation(req,res,next) {
+//     const userName = req.headers.username 
+//     const pass = req.headers.pass 
+//     console.log(typeof pass,typeof userName)
 
-    const userNameCheck = schema1.safeParse(userName)
-    const passCheck = schema2.safeParse(pass)
+//     const userNameCheck = schema1.safeParse(userName)
+//     const passCheck = schema2.safeParse(pass)
 
-    console.log(userNameCheck,passCheck.success)
+//     console.log(userNameCheck,passCheck.success)
 
-    if(!userNameCheck || !passCheck.success){
-        return res.status(411).json({
-            success:false,
-            message:"Something happen with input value"
-        })
-    }
+//     if(!userNameCheck || !passCheck.success){
+//         return res.status(411).json({
+//             success:false,
+//             message:"Something happen with input value"
+//         })
+//     }
 
-    if(userName !== "hari" || pass !== "123"){
-        return res.status(403).json({
-            success:false,
-            message:"User Name And Password Incorrect"
-        })
-    }else{
-        next()
-    }
-}
+//     if(userName !== "hari" || pass !== "123"){
+//         return res.status(403).json({
+//             success:false,
+//             message:"User Name And Password Incorrect"
+//         })
+//     }else{
+//         next()
+//     }
+// }
 
-const checkKidney = (req,res,next) => {
-    const kidney = req.query.nu 
+// const checkKidney = (req,res,next) => {
+//     const kidney = req.query.nu 
 
-    if(!(kidney === "1" || kidney === "2")){
-        res.status(403).json({
-            success:false,
-            message:"Please Check kidney number"
-        })
-    }else{
-        next()
-    }
-}
+//     if(!(kidney === "1" || kidney === "2")){
+//         res.status(403).json({
+//             success:false,
+//             message:"Please Check kidney number"
+//         })
+//     }else{
+//         next()
+//     }
+// }
 
-let count = 0
-const chekCountReq = (req,res,next) => {
-    count = count+1 
-    console.log(count)
-    next()
-}
+// let count = 0
+// const chekCountReq = (req,res,next) => {
+//     count = count+1 
+//     console.log(count)
+//     next()
+// }
 
-app.get("/health-checkup",checkValidation,checkKidney,function (req,res){
-    res.send("All Things are good ")
-})
+// app.get("/health-checkup",checkValidation,checkKidney,function (req,res){
+//     res.send("All Things are good ")
+// })
 
-app.get("/",chekCountReq,(req,res)=>{
-    res.send(`Hello Jee countnumber of req ${count}`)
-})
+// app.get("/",chekCountReq,(req,res)=>{
+//     res.send(`Hello Jee countnumber of req ${count}`)
+// })
 
 // Global catches 
+
+let reqCount = 0 
+
+app.use((req,res,next)=>{
+    reqCount = reqCount + 1
+    // console.log(`Request count: ${reqCount}, URL: ${req.url}`);
+    if(reqCount > 5 ){
+       return res.status(411).send("<h2>You reached your limit</h2>")
+        
+    }
+    next() 
+})
+
+app.get("/first",(req,res)=>{
+    res.send("First Req")
+
+})
+
+app.get("/sec",(req,res)=>{
+    res.send(`sec Req , ${reqCount}`)
+    
+
+})
 
 app.use(function (err,req,res,next){
     return res.status(500).json({
