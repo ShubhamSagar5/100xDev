@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script>
+
+    let timeout
+    function debouncing(){
+
+        clearTimeout(timeout)
+
+        timeout = setTimeout(()=>{
+            calc()
+        },1000)
+
+    }
+
+    
+       async function calc(){
+            const amount = document.getElementById("amount").value
+            const rate = document.getElementById("rate").value
+            const year = document.getElementById("year").value
+          
+            console.log(amount)
+            const res = await fetch(`http://localhost:3000/api/v1/calculateInterest/getInterest?amount=${amount}&rate=${rate}&year=${year}`)
+            const json = await res.json()
+
+            document.getElementById("ans").innerHTML=json.message
+
+        }
+</script>
+<body>
+    
+<input type="text" name="" id="amount" placeholder="Amount" required><br><br>
+<input type="text" name="" id="rate" placeholder="Rate" required><br><br>
+<input oninput="debouncing()" type="text" name="" id="year" placeholder="Year" required><br><br>
+<!-- <button onclick="calc()">Calculate Intereset</button> -->
+
+<h3 id="ans"></h3>
+</body>
+</html>
