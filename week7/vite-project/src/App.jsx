@@ -6,19 +6,29 @@ import Count from './components/Count'
 import Button from './components/Button'
 import CounterContext from './CounterContext'
 import Counter from './components/Counter'
+import {RecoilRoot} from 'recoil'
 
 function App() {
   
 const [count,setCount] =  useState(0)
 
   return (
-    <div>
+    <RecoilRoot>
+       <div>
       <h2>Counter App</h2>
-      <CounterContext.Provider value={{count,setCount}}>
+      <Counter/>
+
+
+
+
+
+      {/* <CounterContext.Provider value={{count,setCount}}>
        <Counter/>
-      </CounterContext.Provider>
+      </CounterContext.Provider> */}
     
     </div>
+    </RecoilRoot>
+   
   )
 }
 
