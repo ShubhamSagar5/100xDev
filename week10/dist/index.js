@@ -34,9 +34,74 @@ function createUser(_a) {
         }
     });
 }
-createUser({ firstName: "hari2", lastName: "hari2", email: "hari2", password: "hari" })
+createUser({ firstName: "hari7", lastName: "hari7", email: "hari7", password: "hari" })
     .then((user) => {
     console.log(user);
+})
+    .catch((error) => {
+    console.log(error);
+});
+const findUser = (name) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const user = yield prisma.users.findFirst({
+            where: {
+                firstName: name
+            }
+        });
+        return user;
+    }
+    catch (error) {
+        console.log(error.message);
+    }
+});
+findUser("hari2")
+    .then((res) => {
+    console.log(res);
+})
+    .catch((error) => {
+    console.log(error.message);
+});
+const updateUser = (idNum, firstName, lastName) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const res = yield prisma.users.update({
+            where: {
+                id: idNum
+            },
+            data: {
+                firstName,
+                lastName
+            }
+        });
+        return res;
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+updateUser(3, "monty", "sagar")
+    .then((res) => {
+    console.log("record update successfully");
+    console.log(res);
+})
+    .catch((error) => {
+    console.log(error);
+});
+const deleteUser = (idNum) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const res = yield prisma.users.delete({
+            where: {
+                id: idNum
+            }
+        });
+        return res;
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
+deleteUser(3)
+    .then((res) => {
+    console.log(res);
 })
     .catch((error) => {
     console.log(error);
