@@ -1,4 +1,13 @@
+type table = {
+    name:string,
+    age:number
+}
 
-
-const x:number = 9
-console.log(x)
+function addData (data : table) {
+   return  data.age
+}
+const usrdata = {
+    name:"shubham",
+    age:10
+}
+addData(usrdata)
