@@ -3,11 +3,32 @@ import { prisma } from "../server";
 import { compareSync, hashSync} from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 import { JWTSECRET } from "../secret";
+import {z} from 'zod'
+
+const userSchema = z.object({
+    name:z.string(),
+    email:z.string().email(),
+    password:z.string()
+})
+
 
 export const signup = async(req:Request,res:Response) => {
         const {name,email,password} = req.body
 
        try {
+
+        const response = userSchema.safeParse({name,email,password})
+
+        if(response.error){
+            console.log(response)
+            return res.status(400).json({
+                success:false,
+                message:response.error.issues.map((err)=>(
+                    err.path[0] + " " + err.message
+                ))
+            })
+        }
+
          const user = await prisma.user.findFirst({
              where:{
                  email:email
